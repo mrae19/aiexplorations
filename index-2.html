@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightroom AI Preset Creator</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="style-2.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Image Preview Area -->
+        <main class="preview-area">
+            <div class="image-preview-container" style="display: none;">
+                <div class="img-comp-container">
+                    <div class="img-comp-img">
+                        <img id="imgAfter" src="#" alt="After">
+                    </div>
+                    <div class="img-comp-img img-comp-overlay">
+                        <img id="imgBefore" src="#" alt="Before">
+                    </div>
+                </div>
+            </div>
+            <!-- Initial upload state -->
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-content">
+                    <div class="upload-icon">📸</div>
+                    <p class="dropzone-text">Drag and drop your image here</p>
+                    <p class="dropzone-text">or</p>
+                    <label for="imageUpload" class="upload-link">choose a file</label>
+                </div>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+        </main>
+
+        <!-- Right Control Panel -->
+        <aside class="control-panel">
+            <div class="panel-header">
+                <h1>Lightroom AI Preset Creator</h1>
+                <div class="panel-actions">
+                    <button id="downloadPreset" class="download-preset-btn">
+                        <span>⬇️ Download Preset</span>
+                    </button>
+                    <button id="removeImage" class="remove-image-btn">
+                        <span>✕ Remove</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-content">
+                <!-- File Info Section -->
+                <section class="panel-section file-info" style="display: none;">
+                    <h2>File Information</h2>
+                    <p class="upload-info">Supported formats: JPG, PNG (max 10MB)</p>
+                </section>
+
+                <!-- AI Control Section -->
+                <section class="panel-section ai-controls">
+                    <h2>Create Your Look</h2>
+                    <div class="chat-input-container">
+                        <textarea id="stylePrompt" placeholder="Describe the look you want to create... (e.g., 'Make it look like a warm summer sunset' or 'Apply a moody cinematic look')"></textarea>
+                        <button id="createButton">Create with AI</button>
+                    </div>
+                </section>
+
+                <!-- Preset Preview Section -->
+                <section class="panel-section preset-section">
+                    <h2>Generated Presets</h2>
+                    <div id="presetPreview" class="preset-preview"></div>
+                </section>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script-2.js"></script>
+</body>
+</html> 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Preset Creator</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>AI Preset Creator</h1>
+    </header>
+
+    <main>
+        <section class="image-upload-section">
+            <h2>Upload Your Image</h2>
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-content">
+                    <div class="upload-icon">📸</div>
+                    <p class="dropzone-text">Drag and drop your image here</p>
+                    <p class="dropzone-text">or</p>
+                    <label for="imageUpload" class="upload-link">choose a file</label>
+                </div>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+            <p class="upload-info">Supported formats: JPG, PNG (max 10MB)</p>
+        </section>
+
+        <section class="image-preview-section" style="display: none;">
+            <div class="preview-header">
+                <h2 class="preview-header-title">Preview</h2>
+                <div class="preview-header-actions">
+                    <button id="downloadPreset" class="download-preset-btn">
+                        <span>⬇️ Download Preset</span>
+                    </button>
+                    <button id="removeImage" class="remove-image-btn">
+                        <span>✕ Remove Image</span>
+                    </button>
+                </div>
+            </div>
+            <div class="image-preview-container">
+                <div class="img-comp-container">
+                    <div class="img-comp-img">
+                        <img id="imgAfter" src="#" alt="After">
+                    </div>
+                    <div class="img-comp-img img-comp-overlay">
+                        <img id="imgBefore" src="#" alt="Before">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="chat-section" style="display: none;">
+            <h2>Describe Your Desired Look</h2>
+            <div class="chat-input-container">
+                <span class="ai-icon">🎨</span>
+                <textarea id="stylePrompt" placeholder="Describe the look you want to create... (e.g., 'Make it look like a warm summer sunset' or 'Apply a moody cinematic look')"></textarea>
+                <button id="createButton">Create with AI</button>
+            </div>
+            <div id="presetPreview" class="preset-preview"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Matt Rae</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
