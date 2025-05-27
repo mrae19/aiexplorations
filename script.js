@@ -557,6 +557,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return bestMatch.score > 0 ? bestMatch : null;
     }
 
+    // Function to optimize image for logging
+    async function optimizeImageForLogging(imgSrc) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                // Calculate new dimensions (max 800px width/height)
+                let width = img.width;
+                let height = img.height;
+                const maxSize = 800;
+                
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = Math.round((height * maxSize) / width);
+                        width = maxSize;
+                    } else {
+                        width = Math.round((width * maxSize) / height);
+                        height = maxSize;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert to JPEG with reduced quality
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.src = imgSrc;
+        });
+    }
+
     // Function to log user prompts and results
     async function logPromptResult(data) {
         try {
@@ -564,7 +598,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add image data to the logging data if an image is loaded
             if (imgBefore && imgBefore.src && imgBefore.src !== '#' && imgBefore.src.startsWith('data:image')) {
-                data.imageData = imgBefore.src;
+                // Optimize image before sending
+                data.imageData = await optimizeImageForLogging(imgBefore.src);
                 data.originalFileName = originalFileName;
             }
 
