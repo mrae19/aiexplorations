@@ -60,7 +60,10 @@ function doPost(e) {
         'Matched Preset',
         'Preset Score',
         'Generated Filters',
-        'Success'
+        'Success',
+        'Logging Error',
+        'Image Optimization Error',
+        'User Agent'
       ]);
     }
     
@@ -71,9 +74,15 @@ function doPost(e) {
     
     // Save image to Drive if present
     let imageUrl = '';
+    let imageSaveError = '';
     if (data.imageData) {
-      imageUrl = saveImageToDrive(data.imageData, data.originalFileName || 'preset-image.jpg');
-      Logger.log('Image saved to Drive: ' + imageUrl);
+      try {
+        imageUrl = saveImageToDrive(data.imageData, data.originalFileName || 'preset-image.jpg');
+        Logger.log('Image saved to Drive: ' + imageUrl);
+      } catch (imageSaveErr) {
+        imageSaveError = imageSaveErr.toString();
+        Logger.log('Failed to save image to Drive: ' + imageSaveError);
+      }
     }
     
     // Format timestamp
@@ -82,13 +91,16 @@ function doPost(e) {
     // Prepare the row data
     const rowData = [
       timestamp,
-      imageUrl,
+      imageUrl || (data.imageOptimizationError ? 'Image optimization failed' : ''),
       data.originalFileName || '',
-      data.prompt,
-      data.matchedPreset,
-      data.presetScore,
-      data.generatedFilters,
-      data.success
+      data.prompt || '',
+      data.matchedPreset || '',
+      data.presetScore || 0,
+      data.generatedFilters || '',
+      data.success !== undefined ? data.success : true,
+      data.loggingError || imageSaveError || '',
+      data.imageOptimizationError || '',
+      data.userAgent || ''
     ];
     Logger.log('Row data prepared: ' + JSON.stringify(rowData));
     
@@ -100,7 +112,8 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({
       'status': 'success',
       'message': 'Data logged successfully',
-      'imageUrl': imageUrl
+      'imageUrl': imageUrl,
+      'imageSaveError': imageSaveError
     }))
     .setMimeType(ContentService.MimeType.JSON);
     

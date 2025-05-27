@@ -559,67 +559,92 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to optimize image for logging
     async function optimizeImageForLogging(imgSrc) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                // Calculate new dimensions (max 800px width/height)
-                let width = img.width;
-                let height = img.height;
-                const maxSize = 800;
-                
-                if (width > maxSize || height > maxSize) {
-                    if (width > height) {
-                        height = Math.round((height * maxSize) / width);
-                        width = maxSize;
-                    } else {
-                        width = Math.round((width * maxSize) / height);
-                        height = maxSize;
-                    }
-                }
+        return new Promise((resolve, reject) => {
+            try {
+                const img = new Image();
+                img.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        // Calculate new dimensions (max 800px width/height)
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 800;
+                        
+                        console.log(`Original image size: ${width}x${height}`);
+                        
+                        if (width > maxSize || height > maxSize) {
+                            if (width > height) {
+                                height = Math.round((height * maxSize) / width);
+                                width = maxSize;
+                            } else {
+                                width = Math.round((width * maxSize) / height);
+                                height = maxSize;
+                            }
+                        }
 
-                canvas.width = width;
-                canvas.height = height;
+                        console.log(`Optimized image size: ${width}x${height}`);
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            throw new Error('Failed to get canvas context');
+                        }
+                        
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to JPEG with reduced quality
+                        const optimizedData = canvas.toDataURL('image/jpeg', 0.7);
+                        console.log(`Optimized image data length: ${optimizedData.length}`);
+                        
+                        resolve(optimizedData);
+                    } catch (canvasError) {
+                        console.error('Canvas optimization error:', canvasError);
+                        reject(new Error(`Canvas optimization failed: ${canvasError.message}`));
+                    }
+                };
                 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+                img.onerror = function() {
+                    reject(new Error('Failed to load image for optimization'));
+                };
                 
-                // Convert to JPEG with reduced quality
-                resolve(canvas.toDataURL('image/jpeg', 0.7));
-            };
-            img.src = imgSrc;
+                img.src = imgSrc;
+            } catch (error) {
+                console.error('Image optimization setup error:', error);
+                reject(new Error(`Image optimization setup failed: ${error.message}`));
+            }
         });
     }
 
     // Function to log user prompts and results
     async function logPromptResult(data) {
+        let imageOptimizationError = null;
+        
         try {
             const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFAEM8rGUZwunIn85bObYJ_7h2YwyAs2h_3LqxeVZ_PzIbxEqT0w3JmhV2IYhNktChyw/exec';
             
+            console.log('Starting logging process...');
+            
             // Add image data to the logging data if an image is loaded
             if (imgBefore && imgBefore.src && imgBefore.src !== '#' && imgBefore.src.startsWith('data:image')) {
-                // Optimize image before sending
-                data.imageData = await optimizeImageForLogging(imgBefore.src);
-                data.originalFileName = originalFileName;
+                try {
+                    console.log('Attempting to optimize image...');
+                    data.imageData = await optimizeImageForLogging(imgBefore.src);
+                    data.originalFileName = originalFileName;
+                    console.log('Image optimization successful');
+                } catch (imageError) {
+                    console.error('Image optimization failed:', imageError);
+                    imageOptimizationError = imageError.message;
+                    // Continue without image data
+                    data.imageOptimizationError = imageError.message;
+                    data.originalFileName = originalFileName;
+                }
             }
 
-            // Try fetch first
-            try {
-                const formData = new FormData();
-                formData.append('data', JSON.stringify(data));
-
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: formData
-                });
-
-                return; // If fetch succeeds, we're done
-            } catch (fetchError) {
-                console.log('Fetch failed, falling back to form submission:', fetchError);
-            }
-
-            // Fallback to form submission if fetch fails
+            console.log('Creating form for submission...');
+            
+            // Create a form dynamically
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = GOOGLE_SCRIPT_URL;
@@ -629,39 +654,99 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'data';
-            input.value = JSON.stringify(data);
+            
+            const jsonData = JSON.stringify(data);
+            console.log(`JSON data length: ${jsonData.length}`);
+            
+            input.value = jsonData;
             form.appendChild(input);
 
-            // Create a temporary iframe with a unique name
-            const iframeName = 'logging_frame_' + Date.now();
+            console.log('Creating iframe for submission...');
+            
+            // Submit in a hidden iframe
             const iframe = document.createElement('iframe');
-            iframe.name = iframeName;
+            iframe.name = 'hidden_logging_frame';
             iframe.style.display = 'none';
+            
+            // Add error handling for iframe
+            iframe.onerror = function() {
+                console.error('Iframe submission error');
+            };
+            
             document.body.appendChild(iframe);
             
-            // Set form target to the iframe
-            form.target = iframeName;
+            form.target = 'hidden_logging_frame';
             document.body.appendChild(form);
+            
+            console.log('Submitting form...');
             
             // Submit the form
             form.submit();
             
-            // Clean up after a longer delay for mobile
+            console.log('Form submitted successfully');
+            
+            // Clean up after a delay
             setTimeout(() => {
                 try {
-                    if (document.body.contains(form)) {
-                        document.body.removeChild(form);
-                    }
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
-                    }
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                    console.log('Cleanup completed');
                 } catch (cleanupError) {
-                    console.error('Error during cleanup:', cleanupError);
+                    console.error('Cleanup error:', cleanupError);
                 }
-            }, 10000); // Increased timeout for mobile
+            }, 5000);
 
         } catch (error) {
-            console.error('Error sending log:', error);
+            console.error('Logging error:', error);
+            
+            // Try to log the error itself (without image data)
+            try {
+                const errorData = {
+                    prompt: data.prompt || 'Unknown prompt',
+                    matchedPreset: '',
+                    presetScore: 0,
+                    generatedFilters: '',
+                    success: false,
+                    loggingError: error.message,
+                    imageOptimizationError: imageOptimizationError,
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('Attempting to log error data...');
+                
+                const errorForm = document.createElement('form');
+                errorForm.method = 'POST';
+                errorForm.action = GOOGLE_SCRIPT_URL;
+                errorForm.style.display = 'none';
+
+                const errorInput = document.createElement('input');
+                errorInput.type = 'hidden';
+                errorInput.name = 'data';
+                errorInput.value = JSON.stringify(errorData);
+                errorForm.appendChild(errorInput);
+
+                const errorIframe = document.createElement('iframe');
+                errorIframe.name = 'error_logging_frame';
+                errorIframe.style.display = 'none';
+                document.body.appendChild(errorIframe);
+                
+                errorForm.target = 'error_logging_frame';
+                document.body.appendChild(errorForm);
+                errorForm.submit();
+                
+                setTimeout(() => {
+                    try {
+                        document.body.removeChild(errorForm);
+                        document.body.removeChild(errorIframe);
+                    } catch (e) {
+                        console.error('Error cleanup failed:', e);
+                    }
+                }, 3000);
+                
+            } catch (errorLoggingError) {
+                console.error('Failed to log error:', errorLoggingError);
+            }
         }
     }
 
