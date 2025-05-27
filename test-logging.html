@@ -56,7 +56,7 @@
     <div id="result"></div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwD7tjWpVrcgTQ5MnxK6f8s9turc642qnTI6L_QBiPSEIq9-cYPpRbwtteBTo9KjVpxjA/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFAEM8rGUZwunIn85bObYJ_7h2YwyAs2h_3LqxeVZ_PzIbxEqT0w3JmhV2IYhNktChyw/exec';
 
         function testLogging() {
             const loadingIndicator = document.getElementById('loadingIndicator');
@@ -87,35 +87,27 @@
             input.value = JSON.stringify(testData);
             form.appendChild(input);
 
-            // Create an iframe to handle the response
-            const iframe = document.createElement('iframe');
-            iframe.name = 'hidden_iframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-
-            // Set up form target and submission handling
-            form.target = 'hidden_iframe';
+            // Submit in a new window/tab
+            form.target = '_blank';
             document.body.appendChild(form);
 
-            // Handle the response
-            iframe.onload = function() {
-                loadingIndicator.style.display = 'none';
-                resultDiv.className = 'result success';
-                resultDiv.innerHTML = `
-                    <h3>Request Sent!</h3>
-                    <p>Check your Google Sheet to see if the test data was logged.</p>
-                    <pre>${JSON.stringify(testData, null, 2)}</pre>
-                `;
-
-                // Clean up
-                setTimeout(() => {
-                    document.body.removeChild(form);
-                    document.body.removeChild(iframe);
-                }, 1000);
-            };
-
-            // Submit the form
+            // Handle the submission
             form.submit();
+            
+            // Show success message
+            loadingIndicator.style.display = 'none';
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = `
+                <h3>Request Sent!</h3>
+                <p>Data sent to Google Sheet:</p>
+                <pre>${JSON.stringify(testData, null, 2)}</pre>
+                <p>A new tab should have opened with the response. Check the Google Sheet to verify the data was logged.</p>
+            `;
+
+            // Clean up the form
+            setTimeout(() => {
+                document.body.removeChild(form);
+            }, 1000);
         }
     </script>
 </body>

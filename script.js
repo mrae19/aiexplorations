@@ -560,21 +560,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to log user prompts and results
     async function logPromptResult(data) {
         try {
-            // Replace this URL with your Google Apps Script Web App URL after deployment
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDTJT_KcuWpqaLzyvARGvjqcLJv-IvNd3SJlKVvx7dwBo8ZwRjo2Ep5x3r4n3aYMdoDw/exec';
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFAEM8rGUZwunIn85bObYJ_7h2YwyAs2h_3LqxeVZ_PzIbxEqT0w3JmhV2IYhNktChyw/exec';
             
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = GOOGLE_SCRIPT_URL;
+            form.style.display = 'none';
+
+            // Add the data as a hidden input
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            form.appendChild(input);
+
+            // Submit in a hidden iframe
+            const iframe = document.createElement('iframe');
+            iframe.name = 'hidden_logging_frame';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
             
-            const result = await response.json();
-            if (result.status !== 'success') {
-                console.error('Error logging prompt:', result.message);
-            }
+            form.target = 'hidden_logging_frame';
+            document.body.appendChild(form);
+            
+            // Submit the form
+            form.submit();
+            
+            // Clean up after a delay
+            setTimeout(() => {
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+            }, 5000);
+
         } catch (error) {
             console.error('Error sending log:', error);
         }
