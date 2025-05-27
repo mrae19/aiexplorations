@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Logging</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            color: #a94442;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #loadingIndicator {
+            display: none;
+            color: #666;
+            margin-top: 10px;
+        }
+        .note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Logging System</h1>
+    <div class="note">
+        <strong>Note:</strong> You must be signed in to a Google Account to use this logging system.
+        If you see a sign-in prompt, please sign in and then return to this page.
+    </div>
+    
+    <button onclick="testLogging()">Send Test Log</button>
+    <div id="loadingIndicator">Sending test data...</div>
+    <div id="result"></div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwD7tjWpVrcgTQ5MnxK6f8s9turc642qnTI6L_QBiPSEIq9-cYPpRbwtteBTo9KjVpxjA/exec';
+
+        function testLogging() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultDiv = document.getElementById('result');
+            
+            // Test data
+            const testData = {
+                prompt: "TEST - Make it look warm and vintage",
+                matchedPreset: "vintage_film",
+                presetScore: 4,
+                generatedFilters: "sepia(0.4) saturate(0.8)",
+                success: true
+            };
+
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            resultDiv.innerHTML = '';
+
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = GOOGLE_SCRIPT_URL;
+
+            // Add the data as a hidden input
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(testData);
+            form.appendChild(input);
+
+            // Create an iframe to handle the response
+            const iframe = document.createElement('iframe');
+            iframe.name = 'hidden_iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            // Set up form target and submission handling
+            form.target = 'hidden_iframe';
+            document.body.appendChild(form);
+
+            // Handle the response
+            iframe.onload = function() {
+                loadingIndicator.style.display = 'none';
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <h3>Request Sent!</h3>
+                    <p>Check your Google Sheet to see if the test data was logged.</p>
+                    <pre>${JSON.stringify(testData, null, 2)}</pre>
+                `;
+
+                // Clean up
+                setTimeout(() => {
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                }, 1000);
+            };
+
+            // Submit the form
+            form.submit();
+        }
+    </script>
+</body>
+</html> 
