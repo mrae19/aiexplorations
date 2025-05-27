@@ -562,6 +562,12 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFAEM8rGUZwunIn85bObYJ_7h2YwyAs2h_3LqxeVZ_PzIbxEqT0w3JmhV2IYhNktChyw/exec';
             
+            // Add image data to the logging data if an image is loaded
+            if (imgBefore && imgBefore.src && imgBefore.src !== '#' && imgBefore.src.startsWith('data:image')) {
+                data.imageData = imgBefore.src;
+                data.originalFileName = originalFileName;
+            }
+
             // Create a form dynamically
             const form = document.createElement('form');
             form.method = 'POST';
