@@ -603,7 +603,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.originalFileName = originalFileName;
             }
 
-            // Create a form dynamically
+            // Try fetch first
+            try {
+                const formData = new FormData();
+                formData.append('data', JSON.stringify(data));
+
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                return; // If fetch succeeds, we're done
+            } catch (fetchError) {
+                console.log('Fetch failed, falling back to form submission:', fetchError);
+            }
+
+            // Fallback to form submission if fetch fails
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = GOOGLE_SCRIPT_URL;
@@ -616,23 +632,33 @@ document.addEventListener('DOMContentLoaded', function() {
             input.value = JSON.stringify(data);
             form.appendChild(input);
 
-            // Submit in a hidden iframe
+            // Create a temporary iframe with a unique name
+            const iframeName = 'logging_frame_' + Date.now();
             const iframe = document.createElement('iframe');
-            iframe.name = 'hidden_logging_frame';
+            iframe.name = iframeName;
             iframe.style.display = 'none';
             document.body.appendChild(iframe);
             
-            form.target = 'hidden_logging_frame';
+            // Set form target to the iframe
+            form.target = iframeName;
             document.body.appendChild(form);
             
             // Submit the form
             form.submit();
             
-            // Clean up after a delay
+            // Clean up after a longer delay for mobile
             setTimeout(() => {
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-            }, 5000);
+                try {
+                    if (document.body.contains(form)) {
+                        document.body.removeChild(form);
+                    }
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                } catch (cleanupError) {
+                    console.error('Error during cleanup:', cleanupError);
+                }
+            }, 10000); // Increased timeout for mobile
 
         } catch (error) {
             console.error('Error sending log:', error);
