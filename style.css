@@ -706,4 +706,140 @@ html, body {
 /* Improve touch scrolling */
 .panel-content {
     -webkit-overflow-scrolling: touch;
+}
+
+/* Hide upload section when image is loaded */
+body.image-loaded .image-upload-section {
+    display: none !important;
+}
+
+/* Mobile layout optimizations */
+@media screen and (max-width: 768px) {
+    /* Ensure full viewport usage */
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    main {
+        padding: 10px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Compact header on mobile when image is loaded */
+    body.image-loaded header {
+        padding: 10px 0;
+    }
+    
+    body.image-loaded header h1 {
+        font-size: 1.2em;
+        margin: 0;
+    }
+    
+    /* Image preview section - constrained height on mobile */
+    body.image-loaded .image-preview-section {
+        flex: 0 0 auto;
+        margin-bottom: 15px;
+    }
+    
+    body.image-loaded .image-preview-container {
+        max-height: 45vh;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    body.image-loaded .img-comp-container {
+        max-height: 45vh !important;
+        width: 100% !important;
+    }
+    
+    body.image-loaded .img-comp-container img {
+        max-height: 45vh;
+        width: 100%;
+        object-fit: contain;
+    }
+    
+    /* Chat section - ensure it's accessible */
+    body.image-loaded .chat-section {
+        flex: 1;
+        display: flex !important;
+        flex-direction: column;
+        min-height: 0;
+        padding: 15px;
+        margin-bottom: 0;
+    }
+    
+    body.image-loaded .chat-section h2 {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+    
+    /* Chat input container - optimize for mobile */
+    body.image-loaded .chat-input-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 120px;
+    }
+    
+    body.image-loaded #stylePrompt {
+        flex: 1;
+        min-height: 80px;
+        max-height: 120px;
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px;
+        resize: none;
+    }
+    
+    body.image-loaded #createButton {
+        flex: 0 0 auto;
+        padding: 14px;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+    
+    /* Preview header adjustments for mobile */
+    body.image-loaded .preview-header {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+    
+    body.image-loaded .preview-header-title {
+        font-size: 1em;
+    }
+    
+    body.image-loaded .preview-header-actions {
+        gap: 8px;
+    }
+    
+    body.image-loaded .remove-image-btn,
+    body.image-loaded .download-preset-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    /* Ensure footer doesn't interfere */
+    body.image-loaded footer {
+        margin-top: 10px;
+        padding: 15px;
+    }
+    
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Desktop optimizations when image is loaded */
+@media screen and (min-width: 769px) {
+    body.image-loaded .image-preview-section {
+        margin-bottom: 30px;
+    }
+    
+    body.image-loaded .chat-section {
+        display: block !important;
+    }
 } 

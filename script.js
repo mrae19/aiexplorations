@@ -75,6 +75,67 @@ document.addEventListener('DOMContentLoaded', function() {
             description: 'Deep shadows with rich contrast for a dramatic look',
             keywords: ['dark', 'moody', 'dramatic', 'shadow', 'contrast', 'mysterious', 'intense'],
             useCase: 'Ideal for dramatic portraits, low-key photography, or moody landscapes'
+        },
+        // NEW INSTAGRAM/VSCO INSPIRED PRESETS
+        'vsco_hb1': {
+            filters: 'contrast(1.15) brightness(1.08) saturate(0.9) sepia(0.05) hue-rotate(-5deg)',
+            description: 'VSCO HB1 inspired - bright and clean with subtle warmth',
+            keywords: ['vsco', 'bright', 'clean', 'minimal', 'instagram', 'lifestyle', 'fresh', 'modern'],
+            useCase: 'Perfect for lifestyle content, food photography, and bright Instagram feeds'
+        },
+        'instagram_warm': {
+            filters: 'saturate(1.2) contrast(1.1) brightness(1.1) sepia(0.2) hue-rotate(10deg)',
+            description: 'Popular Instagram warm filter with enhanced oranges and yellows',
+            keywords: ['instagram', 'warm', 'orange', 'yellow', 'influencer', 'lifestyle', 'cozy', 'autumn'],
+            useCase: 'Ideal for lifestyle posts, autumn photos, and creating a cohesive warm Instagram feed'
+        },
+        'teal_orange': {
+            filters: 'contrast(1.2) saturate(1.3) brightness(1.05) hue-rotate(15deg) sepia(0.1)',
+            description: 'Trendy teal and orange color grading popular on social media',
+            keywords: ['teal', 'orange', 'trendy', 'modern', 'cinematic', 'pop', 'vibrant', 'social'],
+            useCase: 'Great for modern portraits, urban photography, and trendy social media content'
+        },
+        'film_grain': {
+            filters: 'contrast(1.1) brightness(1.02) saturate(0.95) sepia(0.08) opacity(0.98)',
+            description: 'Film aesthetic with subtle grain and muted colors',
+            keywords: ['film', 'grain', 'analog', 'muted', 'aesthetic', 'indie', 'artistic', 'texture'],
+            useCase: 'Perfect for artistic photography, indie aesthetics, and film-inspired content'
+        },
+        'pastel_dream': {
+            filters: 'brightness(1.2) contrast(0.85) saturate(0.7) sepia(0.15) hue-rotate(-20deg)',
+            description: 'Soft pastel tones with dreamy, ethereal quality',
+            keywords: ['pastel', 'soft', 'dreamy', 'pink', 'purple', 'kawaii', 'aesthetic', 'gentle'],
+            useCase: 'Ideal for fashion photography, beauty content, and soft aesthetic feeds'
+        },
+        'urban_grit': {
+            filters: 'contrast(1.4) brightness(0.95) saturate(0.8) sepia(0.1) hue-rotate(-15deg)',
+            description: 'High contrast urban look with desaturated colors',
+            keywords: ['urban', 'gritty', 'street', 'contrast', 'edgy', 'city', 'industrial', 'raw'],
+            useCase: 'Perfect for street photography, urban exploration, and edgy portrait work'
+        },
+        'golden_hour': {
+            filters: 'saturate(1.3) contrast(1.05) brightness(1.15) sepia(0.25) hue-rotate(20deg)',
+            description: 'Enhanced golden hour glow with warm, magical lighting',
+            keywords: ['golden', 'hour', 'magic', 'glow', 'sunset', 'warm', 'romantic', 'dreamy'],
+            useCase: 'Excellent for portraits during golden hour, romantic scenes, and warm lifestyle content'
+        },
+        'matte_black': {
+            filters: 'contrast(0.9) brightness(1.1) saturate(0.7) sepia(0.05) opacity(0.95)',
+            description: 'Trendy matte finish with lifted blacks and reduced contrast',
+            keywords: ['matte', 'lifted', 'blacks', 'trendy', 'modern', 'soft', 'instagram', 'fade'],
+            useCase: 'Popular for modern Instagram aesthetics, portrait photography, and lifestyle content'
+        },
+        'neon_nights': {
+            filters: 'contrast(1.3) saturate(1.4) brightness(0.9) hue-rotate(270deg) sepia(0.1)',
+            description: 'Cyberpunk-inspired with enhanced purples and magentas',
+            keywords: ['neon', 'cyberpunk', 'purple', 'magenta', 'night', 'futuristic', 'electric', 'vibrant'],
+            useCase: 'Perfect for nightlife photography, neon-lit scenes, and futuristic aesthetics'
+        },
+        'clean_minimal': {
+            filters: 'contrast(1.05) brightness(1.12) saturate(0.85) sepia(0.02)',
+            description: 'Clean, minimal look with bright whites and subtle desaturation',
+            keywords: ['clean', 'minimal', 'white', 'bright', 'simple', 'modern', 'scandinavian', 'fresh'],
+            useCase: 'Ideal for minimalist feeds, product photography, and clean lifestyle content'
         }
     };
 
@@ -253,6 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
             imgAfter.style.filter = '';
             imgAfter.classList.remove('kodak-film-look');
 
+            // Add image-loaded class to body for layout changes
+            document.body.classList.add('image-loaded');
+
             // Show preview and chat sections with animation
             setTimeout(() => {
                 previewSection.style.display = 'block';
@@ -263,6 +327,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add visible class
                 previewSection.classList.add('visible');
                 chatSection.classList.add('visible');
+                
+                // Smooth scroll to chat section on mobile
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        chatSection.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }, 500);
+                }
             }, 0);
 
             imgBefore.onload = function() {
@@ -285,6 +359,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (displayHeight > cssMaxHeight) {
                     displayHeight = cssMaxHeight;
                     displayWidth = displayHeight * aspectRatio;
+                }
+                
+                // On mobile, respect the viewport height constraint
+                if (window.innerWidth <= 768) {
+                    const maxMobileHeight = window.innerHeight * 0.45; // 45vh
+                    if (displayHeight > maxMobileHeight) {
+                        displayHeight = maxMobileHeight;
+                        displayWidth = displayHeight * aspectRatio;
+                    }
                 }
                 
                 imgCompContainer.style.width = displayWidth + 'px';
@@ -321,6 +404,9 @@ document.addEventListener('DOMContentLoaded', function() {
             imgBefore.src = '#';
             imgAfter.src = '#';
             
+            // Remove image-loaded class from body
+            document.body.classList.remove('image-loaded');
+            
             // Hide sections with animation
             previewSection.classList.remove('visible');
             chatSection.classList.remove('visible');
@@ -343,6 +429,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clear the style prompt
             stylePromptTextarea.value = '';
+            
+            // Scroll back to top on mobile
+            if (window.innerWidth <= 768) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
     }
 
