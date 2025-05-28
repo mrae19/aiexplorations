@@ -13,6 +13,15 @@
     </header>
 
     <main>
+        <section class="chat-section" style="display: none;">
+            <h2>Describe Your Desired Look</h2>
+            <div class="chat-input-container">
+                <!-- <span class="ai-icon">🎨</span> -->
+                <textarea id="stylePrompt" placeholder="Describe the look you want to achieve... "></textarea>
+                <button id="createButton">Create with AI</button>
+            </div>
+            <div id="presetPreview" class="preset-preview"></div>
+        </section>
         <section class="image-upload-section">
             <h2>Upload Your Image</h2>
             <div class="dropzone" id="dropzone">
@@ -51,7 +60,7 @@
             </div>
         </section>
 
-        <section class="chat-section" style="display: none;">
+        <!-- <section class="chat-section" style="display: none;">
             <h2>Describe Your Desired Look</h2>
             <div class="chat-input-container">
                 <span class="ai-icon">🎨</span>
@@ -59,7 +68,7 @@
                 <button id="createButton">Create with AI</button>
             </div>
             <div id="presetPreview" class="preset-preview"></div>
-        </section>
+        </section> -->
     </main>
 
     <footer>

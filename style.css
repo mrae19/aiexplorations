@@ -13,17 +13,18 @@
 body {
     font-family: 'Adobe Clean', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
-    background-color: var(--bg-secondary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #8e44ad 50%, #c44569 75%, #f093fb 100%);
+    background-attachment: fixed;
     color: var(--text-primary);
     line-height: 1.6;
 }
 
 header {
-    background: var(--bg-primary);
+    /* background: var(--bg-primary); */
     color: var(--text-primary);
     padding: 1.5em 0;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    /* border-bottom: 1px solid var(--border-color); */
 }
 
 header h1 {
@@ -38,7 +39,7 @@ main {
     padding: 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--bg-secondary);
+    /* background-color: var(--bg-secondary); */
 }
 
 .image-upload-section, .image-preview-section, .chat-section {
@@ -178,14 +179,14 @@ h2 {
     align-items: center;
     gap: 15px;
     padding: 15px;
-    border: 1px solid var(--border-color);
+    border: 1px solid transparent;
     border-radius: 8px;
     background: var(--bg-primary);
     transition: border-color 0.3s ease;
 }
 
 .chat-input-container:focus-within {
-    border-color: var(--accent-blue);
+    /* border-color: var(--accent-blue); */
 }
 
 .ai-icon {
@@ -579,7 +580,7 @@ footer {
 
     #stylePrompt {
         width: 100%;
-        min-height: 60px;
+        min-height: 40px;
         font-size: 16px; /* Prevent iOS zoom on focus */
         padding: 10px;
     }
@@ -763,12 +764,12 @@ body.image-loaded .image-upload-section {
     
     /* Chat section - ensure it's accessible */
     body.image-loaded .chat-section {
-        flex: 1;
+        /* flex: 1; */
         display: flex !important;
         flex-direction: column;
         min-height: 0;
         padding: 15px;
-        margin-bottom: 0;
+        margin-bottom: 20px;
     }
     
     body.image-loaded .chat-section h2 {
@@ -787,8 +788,8 @@ body.image-loaded .image-upload-section {
     
     body.image-loaded #stylePrompt {
         flex: 1;
-        min-height: 80px;
-        max-height: 120px;
+        min-height: 40px;
+        max-height: 60px;
         font-size: 16px; /* Prevent iOS zoom */
         padding: 12px;
         resize: none;
@@ -823,8 +824,8 @@ body.image-loaded .image-upload-section {
     
     /* Ensure footer doesn't interfere */
     body.image-loaded footer {
-        margin-top: 10px;
-        padding: 15px;
+        margin-top: 5px;
+        padding: 10px;
     }
     
     /* Smooth scroll behavior */
