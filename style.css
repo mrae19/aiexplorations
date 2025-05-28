@@ -37,7 +37,7 @@ header h1 {
 
 main {
     padding: 40px 20px;
-    max-width: 1200px;
+    max-width: 2048px;
     margin: 0 auto;
     /* background-color: var(--bg-secondary); */
 }
@@ -97,7 +97,7 @@ h2 {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
     border-radius: 8px;
     min-height: 500px;
     display: flex;
@@ -235,9 +235,12 @@ h2 {
 footer {
     text-align: center;
     padding: 30px;
-    background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+    /* background: linear-gradient(135deg, #2d3436 0%, #000000 100%); */
     color: #fff;
     margin-top: 40px;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
 }
 
 /* Toast notification styling */
@@ -743,6 +746,7 @@ body.image-loaded .image-upload-section {
     body.image-loaded .image-preview-section {
         flex: 0 0 auto;
         margin-bottom: 15px;
+        height: 900px;
     }
     
     body.image-loaded .image-preview-container {
@@ -838,6 +842,7 @@ body.image-loaded .image-upload-section {
 @media screen and (min-width: 769px) {
     body.image-loaded .image-preview-section {
         margin-bottom: 30px;
+        height: calc(100vh - 600px);
     }
     
     body.image-loaded .chat-section {
